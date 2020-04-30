@@ -1,0 +1,22 @@
+﻿@model FilterViewModel
+
+<div class="col-lg-12" id="filterGroup">
+    <table width="100%" id="formTable">
+        <tr class="form-group">
+            <td class="col-lg-12">
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="field">Field:</label>
+                        @Html.DropDownListFor(m => m.Field, Model.Fields, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="usr">Value:</label>
+                        @Html.TextBoxFor(m => m.Value, new { @class = "form-control" })
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>

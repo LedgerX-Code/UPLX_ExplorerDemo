@@ -1,0 +1,466 @@
+﻿@model PatientViewModel
+@{
+    ViewData["Title"] = "Patient Detail";
+}
+
+<style>
+    .overflow {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 300px;
+    }
+
+    .titleOverflow {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 900px;
+    }
+
+    .dataTables_wrapper {
+        margin: 20px;
+    }
+
+    :placeholder-shown {
+        color: white !important;
+    }
+
+    ::-webkit-input-placeholder {
+        color: white !important;
+    }
+
+    ::-moz-placeholder {
+        color: white !important;
+    }
+
+    :-ms-input-placeholder {
+        color: white !important;
+    }
+
+    #triageTbl ul {
+        list-style-type:none;
+        margin: 0;
+        padding-left: 5px;
+    }
+</style>
+<div class="card">
+    <div class="card-body rounded" style="background: linear-gradient(60deg, #26c6da, #00acc1);">
+        <div class="input-group">
+            <div class="input-group-prepend" style="width:100%;">
+                <span class="bmd-form-group" style="width:100%;">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="txtSearch" style="width:100%;color: white" placeholder="Enter your patientId">
+                            </div>
+                            <div class="col-md-2">
+                                <span class="input-group-text" style="float:right">
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Search
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item" href="#" onclick="Search('patientId')">PatientId</a>
+                                            @*<a class="dropdown-item" href="#">Facility</a>*@
+                                        </div>
+                                    </div>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <h3 class="titleOverflow">
+            <i class="material-icons">person_outline</i> Patient @if (string.IsNullOrEmpty(Model.PatientId))
+            {<span style="font-size:0.8em"></span> }
+            else
+            { <span style="font-size:0.8em">@Model.PatientId</span>}
+        </h3>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Patient Overview</h4>
+            </div>
+            <div class="card-body">
+                <div class="row border-bottom mb-3">
+                    <div class="col-md-2">
+                        <label class="text-primary">Gender:</label>
+                    </div>
+                    <div class="col-md-4">
+                        @if (Model.Patient.Events != null)
+                        {
+                            <label>@Model.Patient.Events[0].Variables.Gender</label>
+                        }
+                    </div>
+                    <div class="col-md-2">
+                        <label class="text-primary">Blood Code:</label>
+                    </div>
+                    <div class="col-md-4">
+                        @if (Model.Patient.Events != null)
+                        {
+                            <label>@Model.Patient.Events[0].BloodCode</label>
+                        }
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label class="text-primary">Body Type:</label>
+                    </div>
+                    <div class="col-md-4">
+                        @if (Model.Patient.Events != null)
+                        {
+                            <label>@Model.Patient.Events[0].BodyType</label>
+                        }
+                    </div>
+                    <div class="col-md-2">
+                        <label class="text-primary">Created Date:</label>
+                    </div>
+                    <div class="col-md-4">
+                        @if (Model.Patient != null)
+                        {
+                            <label>@Model.Patient.TransactionTimestamp</label>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">More Info</h4>
+            </div>
+            <div class="card-body">
+                <div class="row border-bottom mb-3">
+                    <div class="col-md-2">
+                        <label class="text-primary">Nationality:</label>
+                    </div>
+                    <div class="col-md-4">
+                        @if (Model.Patient.Events != null)
+                        {
+                            <label>@Model.Patient.Events[0].Location.Nationality</label>
+                        }
+                    </div>
+                    <div class="col-md-2">
+                        <label class="text-primary">Religion:</label>
+                    </div>
+                    <div class="col-md-4">
+                        @if (Model.Patient.Events != null)
+                        {
+                            <label>@Model.Patient.Events[0].Social.Religon</label>
+                        }
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label class="text-primary">Maritial Status:</label>
+                    </div>
+                    <div class="col-md-4">
+                        @if (Model.Patient.Events != null)
+                        {
+                            <label>@Model.Patient.Events[0].Social.MaritalStatus</label>
+                        }
+                    </div>
+                    <div class="col-md-2">
+                        <label class="text-primary">AccessibilityToHospital:</label>
+                    </div>
+                    <div class="col-md-4">
+                        @if (Model.Patient.Events != null)
+                        {
+                            <label>@Model.Patient.Events[0].Location.AccessibilityToHospital</label>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header card-header-info card-header-icon">
+        <div class="card-icon" style="min-width:220px;">
+            <h4>Consultation Transaction</h4>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="consultTbl" class="table">
+                    <thead class="text-primary">
+                        <tr>
+                            <td width="20%">Trxn #</td>
+                            <td>Date</td>
+                            <td>Category</td>
+                            <td>Visit Code</td>
+                            <td>ConsOutcome</td>
+                            <td>Facility</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var trxn in Model.ConsultTrxns)
+                        {
+                            foreach (var e in trxn.Events)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="overflow">@trxn.TransactionId</div>
+                                    </td>
+                                    <td>@trxn.TransactionTimestamp</td>
+                                    <td>@e.Category</td>
+                                    <td>@e.VisitCode</td>
+                                    <td>@e.ConsOutcome</td>
+                                    <td>@e.Facility</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header card-header-danger card-header-icon">
+        <div class="card-icon" style="min-width:220px;">
+            <h4>Issue Transaction</h4>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="issueTbl" class="table">
+                    <thead class="text-primary">
+                        <tr>
+                            <td width="20%">Trxn #</td>
+                            <td>Date</td>
+                            <td>Type</td>
+                            <td>Title</td>
+                            <td>Visit Code</td>
+                            <td>Outcome</td>
+                            <td>Occurrence</td>
+                            <td>Remarks</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var trxn in Model.IssueTrxns)
+                        {
+                            foreach (var e in trxn.Events)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="overflow">@trxn.TransactionId</div>
+                                    </td>
+                                    <td>@trxn.TransactionTimestamp</td>
+                                    <td>@e.IssueType</td>
+                                    <td>@e.Title</td>
+                                    <td>@e.VisitCode</td>
+                                    <td>@e.OutCome</td>
+                                    <td>@e.Occurrence</td>
+                                    <td>@e.Remarks</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header card-header-success card-header-icon">
+        <div class="card-icon" style="min-width:220px;">
+            <h4>Prescription Transaction</h4>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="preTbl" class="table">
+                    <thead class="text-primary">
+                        <tr>
+                            <td width="20%">Trxn #</td>
+                            <td>Date</td>
+                            <td>Visit Code</td>
+                            <td>Facility</td>
+                            <td>Drug Name</td>
+                            <td>Drug Type</td>
+                            <td>Quantity</td>
+                            <td>Dosage</td>
+                            <td>Frequency</td>
+                            <td>Remarks</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var trxn in Model.PrescriptTrxns)
+                        {
+                            foreach (var e in trxn.Events)
+                            {
+                                foreach (var medicine in e.Medicines)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="overflow">@trxn.TransactionId</div>
+                                        </td>
+                                        <td>@trxn.TransactionTimestamp</td>
+                                        <td>@e.VisitCode</td>
+                                        <td>@e.Facility</td>
+                                        <td>@medicine.DrugName</td>
+                                        <td>@medicine.DrugType</td>
+                                        <td>@medicine.Quantity</td>
+                                        <td>@medicine.Dose</td>
+                                        <td>@medicine.Frequency</td>
+                                        <td>@e.Description</td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header card-header-warning card-header-icon">
+        <div class="card-icon" style="min-width:220px;">
+            <h4>Triage Transaction</h4>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="triageTbl" class="table">
+                    <thead class="text-primary">
+                        <tr>
+                            <td width="15%">Trxn #</td>
+                            <td>Date</td>
+                            <td>Visit Code</td>
+                            <td>Department</td>
+                            <td>Temperature</td>
+                            <td>Respiratory</td>
+                            <td>Heart Rate</td>
+                            <td>Blood Pressure</td>
+                            <td>Oxygen</td>
+                            <td>Height</td>
+                            <td>Weight</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var trxn in Model.TriageTrxns)
+                        {
+                            foreach (var e in trxn.Events)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="overflow">@trxn.TransactionId</div>
+                                    </td>
+                                    <td>@trxn.TransactionTimestamp</td>
+                                    <td>@e.VisitCode</td>
+                                    <td>@e.Department</td>
+                                    <td>
+                                        @{
+                                            if (e.Temperature != null)
+                                            {
+                                                foreach (var temp in e.Temperature.Select(t => t.Type + " " + t.Value + " " + t.Unit).ToList())
+                                                {
+                                                    <ul>
+                                                        <li>@temp</li>
+                                                    </ul>
+                                                }
+                                            }
+                                        }
+                                    </td>
+                                    <td>
+                                        @{
+                                            if (e.Respiroty != null)
+                                            {
+                                                foreach (var temp in e.Respiroty.Select(t => t.Type + " " + t.Value + " " + t.Unit).ToList())
+                                                {
+                                                    <ul>
+                                                        <li>@temp</li>
+                                                    </ul>
+                                                }
+                                            }
+                                        }
+                                    </td>
+                                    <td>
+                                        @{
+                                            if (e.HeartRate != null)
+                                            {
+                                                foreach (var temp in e.HeartRate.Select(t => t.Type + " " + t.Value + " " + t.Unit).ToList())
+                                                {
+                                                    <ul>
+                                                        <li>@temp</li>
+                                                    </ul>
+                                                }
+                                            }
+                                        }
+                                    </td>
+                                    <td>
+                                        @{
+                                            if (e.BloodPressure != null)
+                                            {
+                                                foreach (var temp in e.BloodPressure.Select(t => t.Type + " " + t.Value + " " + t.Unit).ToList())
+                                                {
+                                                    <ul>
+                                                        <li>@temp</li>
+                                                    </ul>
+                                                }
+                                            }
+                                        }
+                                    </td>
+                                    <td>
+                                        @{
+                                            if (e.Oxygen != null)
+                                            {
+                                                foreach (var temp in e.Oxygen.Select(t => t.Type + " " + t.Value + " " + t.Unit).ToList())
+                                                {
+                                                    <ul>
+                                                        <li>@temp</li>
+                                                    </ul>
+                                                }
+                                            }
+                                        }
+                                    </td>
+                                    <td>
+                                        @{
+                                            if (e.Height != null)
+                                            {
+                                                foreach (var temp in e.Height.Select(t => t.Type + " " + t.Value + " " + t.Unit).ToList())
+                                                {
+                                                    <ul>
+                                                        <li>@temp</li>
+                                                    </ul>
+                                                }
+                                            }
+                                        }
+                                    </td>
+                                    <td>
+                                        @{
+                                            if (e.Weight != null)
+                                            {
+                                                foreach (var temp in e.Weight.Select(t => t.Type + " " + t.Value + " " + t.Unit).ToList())
+                                                {
+                                                    <ul>
+                                                        <li>@temp</li>
+                                                    </ul>
+                                                }
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
